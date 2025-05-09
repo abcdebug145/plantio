@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ Plantio</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('../assets/images/web_bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-logo {
+            height: 40px;
+            margin-right: 16px;
+        }
+
+        .navbar-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-box {
+            width: 350px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #b2df28;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .navbar-link {
+            text-decoration: none;
+            color: #388e3c;
+            font-weight: bold;
+            padding: 6px 16px;
+            border-radius: 16px;
+            transition: background 0.2s;
+        }
+
+        .navbar-link:hover {
+            background: #b2df28;
+            color: #222;
+        }
+
+        .main-container {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px 60px;
+            border-radius: 24px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup {
+            background: #fff;
+            padding: 32px 40px;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+            min-width: 350px;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow: auto;
+            position: relative;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 18px;
+            background: #b2df28;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #222;
+        }
+
+        .popup-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+        }
+
+        .popup-table th,
+        .popup-table td {
+            border: 1px solid #b2df28;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .popup-table th {
+            background: #e6f9c5;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <img src="../assets/images/Leaf_icon_03.svg.png" alt="Logo" class="navbar-logo">
+            <span style="font-size: 1.5rem; color: #388e3c; font-weight: bold;">Plantio</span>
+        </div>
+        <div class="navbar-center">
+            <input type="text" class="search-box" id="search-box" placeholder="Tìm kiếm cây trồng, bài viết...">
+        </div>
+        <div class="navbar-right" id="navbar-right">
+            <a href="#" class="navbar-link" id="login-link">Đăng nhập</a>
+            <a href="#" class="navbar-link" id="register-link">Đăng ký</a>
+        </div>
+    </nav>
+    <div class="main-container">
+        <div class="main-content">
+            <h1>Chào mừng đến với Plantio!</h1>
+            <p>Khám phá thế giới cây xanh, mẹo trồng cây và nhiều hơn nữa.</p>
+        </div>
+    </div>
+    <!-- Popup kết quả tìm kiếm -->
+    <div class="popup-overlay" id="popup-overlay">
+        <div class="popup">
+            <button class="popup-close" id="popup-close">&times;</button>
+            <div id="popup-content"></div>
+        </div>
+    </div>
+    <script>
+        // Giả lập trạng thái đăng nhập
+        // Đổi biến này thành true để kiểm tra giao diện đã đăng nhập
+        const isLoggedIn = true;
+        const userName = "Nam";
+        const navbarRight = document.getElementById('navbar-right');
+        if (isLoggedIn) {
+            navbarRight.innerHTML = `<span style=\"color:#388e3c;font-weight:bold; margin-right: 70px;\">Hello, ${userName}</span>`;
+        }
+
+        // Xử lý tìm kiếm
+        const searchBox = document.getElementById('search-box');
+        const popupOverlay = document.getElementById('popup-overlay');
+        const popupContent = document.getElementById('popup-content');
+        const popupClose = document.getElementById('popup-close');
+
+        function showPopup(html) {
+            popupContent.innerHTML = html;
+            popupOverlay.style.display = 'flex';
+        }
+        function hidePopup() {
+            popupOverlay.style.display = 'none';
+        }
+        popupClose.onclick = hidePopup;
+        popupOverlay.onclick = function (e) {
+            if (e.target === popupOverlay) hidePopup();
+        };
+
+        searchBox.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                const key = searchBox.value.trim();
+                if (key) {
+                    fetch(`/data?key=${encodeURIComponent(key)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            // Hiển thị kết quả dạng bảng
+                            let html = '';
+                            if (data.result && Array.isArray(data.result) && data.result.length > 0) {
+                                html += '<table class="popup-table">';
+                                html += '<tr>';
+                                // Header
+                                Object.keys(data.result[0]).forEach(col => {
+                                    html += `<th>${col}</th>`;
+                                });
+                                html += '</tr>';
+                                // Rows
+                                data.result.forEach(row => {
+                                    html += '<tr>';
+                                    Object.values(row).forEach(val => {
+                                        html += `<td>${val}</td>`;
+                                    });
+                                    html += '</tr>';
+                                });
+                                html += '</table>';
+                            } else if (data.result) {
+                                html = `<div>${data.result}</div>`;
+                            } else {
+                                html = '<div>Không tìm thấy kết quả phù hợp.</div>';
+                            }
+                            showPopup(html);
+                        })
+                        .catch(err => {
+                            showPopup('<div style="color:red">Lỗi khi tìm kiếm!</div>');
+                        });
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
