@@ -5,139 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Chủ Plantio</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: url('../assets/images/web_bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
-
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 40px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .navbar-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-logo {
-            height: 40px;
-            margin-right: 16px;
-        }
-
-        .navbar-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-box {
-            width: 350px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 1px solid #b2df28;
-            outline: none;
-            font-size: 16px;
-        }
-
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .navbar-link {
-            text-decoration: none;
-            color: #388e3c;
-            font-weight: bold;
-            padding: 6px 16px;
-            border-radius: 16px;
-            transition: background 0.2s;
-        }
-
-        .navbar-link:hover {
-            background: #b2df28;
-            color: #222;
-        }
-
-        .main-container {
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .main-content {
-            background: rgba(255, 255, 255, 0.85);
-            padding: 40px 60px;
-            border-radius: 24px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-            text-align: center;
-        }
-
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.3);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .popup {
-            background: #fff;
-            padding: 32px 40px;
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-            min-width: 350px;
-            max-width: 90vw;
-            max-height: 80vh;
-            overflow: auto;
-            position: relative;
-        }
-
-        .popup-close {
-            position: absolute;
-            top: 10px;
-            right: 18px;
-            background: #b2df28;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            font-size: 20px;
-            cursor: pointer;
-            color: #222;
-        }
-
-        .popup-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 18px;
-        }
-
-        .popup-table th,
-        .popup-table td {
-            border: 1px solid #b2df28;
-            padding: 8px 12px;
-            text-align: left;
-        }
-
-        .popup-table th {
-            background: #e6f9c5;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/styles/main.css">
 </head>
 
 <body>
@@ -157,7 +25,34 @@
     <div class="main-container">
         <div class="main-content">
             <h1>Chào mừng đến với Plantio!</h1>
-            <p>Khám phá thế giới cây xanh, mẹo trồng cây và nhiều hơn nữa.</p>
+            <div class="main-card-container">
+                <a href="/products" style="text-decoration: none;">
+                    <div class="main-card" id="card-products">
+                        <img src="../assets/images/smartpot.jpg" alt="Sản phẩm">
+                        <div class="main-card-content">
+                            <div class="main-card-title">Xem các sản phẩm</div>
+                            <div class="main-card-desc">Khám phá các sản phẩm, chậu cây và phụ kiện của Plantio.</div>
+                            <!-- <button class="main-card-btn" id="view-products">Xem ngay</button> -->
+                        </div>
+                    </div>
+                </a>
+                <a href="/mypot" style="text-decoration: none;">
+                    <div class="main-card" id="card-pot">
+                        <img src="../assets/images/mypot.jpg" alt="Chậu cây của bạn">
+                        <div class="main-card-content">
+                            <div class="main-card-title">Liên kết chậu cây của bạn</div>
+                            <div class="main-card-desc">Nhập mã số chậu để xem dữ liệu cây của bạn.</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div id="products-section" style="display:none; margin-top:32px;"></div>
+            <div id="pot-section" style="display:none; margin-top:32px;">
+                <input type="text" id="pot-code" placeholder="Nhập mã số chậu..."
+                    style="padding:8px; border-radius:6px; border:1px solid #b2df28;">
+                <button id="pot-submit" class="main-btn">Xem dữ liệu</button>
+                <div id="pot-data" style="margin-top:20px;"></div>
+            </div>
         </div>
     </div>
     <!-- Popup kết quả tìm kiếm -->
@@ -165,6 +60,29 @@
         <div class="popup">
             <button class="popup-close" id="popup-close">&times;</button>
             <div id="popup-content"></div>
+        </div>
+    </div>
+    <!-- Button chat -->
+    <button class="chat-button" id="chat-button">
+        <img src="../assets/images/chat.svg" alt="Chat" style="width: 100%; height: 100%;">
+    </button>
+    <!-- Khung chat -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-main">
+            <div class="chat-header">&nbsp;&nbsp;Plantio's Assistant
+                <button class="chat-hide-btn" id="chat-hide-btn" title="Ẩn khung chat">&minus;</button>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input">
+                <label for="chat-image">
+                    <img src="../assets/images/attach.svg" alt="Chat" style="width: 20px; height: 20px;">
+                </label>
+                <input type="file" id="chat-image" accept="image/*">
+                <input type="text" id="chat-input" placeholder="Nhập tin nhắn...">
+                <button id="send-button">
+                    <img src="../assets/images/send.svg" alt="Chat" style="width: 20px; height: 20px;">
+                </button>
+            </div>
         </div>
     </div>
     <script>
@@ -202,18 +120,19 @@
                     fetch(`/data?key=${encodeURIComponent(key)}`)
                         .then(res => res.json())
                         .then(data => {
+                            console.log(data)
                             // Hiển thị kết quả dạng bảng
                             let html = '';
-                            if (data.result && Array.isArray(data.result) && data.result.length > 0) {
+                            if (data && Array.isArray(data) && data.length > 0) {
                                 html += '<table class="popup-table">';
                                 html += '<tr>';
                                 // Header
-                                Object.keys(data.result[0]).forEach(col => {
-                                    html += `<th>${col}</th>`;
-                                });
+                                html += '<th>Device ID</th>';
+                                html += '<th>Moisure Percent</th>';
+                                html += '<th></th>';
                                 html += '</tr>';
                                 // Rows
-                                data.result.forEach(row => {
+                                data.forEach(row => {
                                     html += '<tr>';
                                     Object.values(row).forEach(val => {
                                         html += `<td>${val}</td>`;
@@ -221,8 +140,8 @@
                                     html += '</tr>';
                                 });
                                 html += '</table>';
-                            } else if (data.result) {
-                                html = `<div>${data.result}</div>`;
+                            } else if (data) {
+                                html = `<div>${data}</div>`;
                             } else {
                                 html = '<div>Không tìm thấy kết quả phù hợp.</div>';
                             }
@@ -234,6 +153,117 @@
                 }
             }
         });
+
+        // Xử lý chat
+        const chatButton = document.getElementById('chat-button');
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatImage = document.getElementById('chat-image');
+        const chatHideBtn = document.getElementById('chat-hide-btn');
+
+        chatButton.onclick = function () {
+            if (chatContainer.style.display === 'none' || !chatContainer.style.display) {
+                chatContainer.style.display = 'flex';
+            } else {
+                chatContainer.style.display = 'none';
+            }
+        };
+
+        chatHideBtn.onclick = function () {
+            chatContainer.style.display = 'none';
+        };
+
+        function appendMessage(message, isUser, imageUrl) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message' + (isUser ? ' user' : '');
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'chat-message-content';
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.style.maxWidth = '120px';
+                img.style.maxHeight = '120px';
+                img.style.display = 'block';
+                img.style.marginBottom = '6px';
+                contentDiv.appendChild(img);
+            }
+            contentDiv.appendChild(document.createTextNode(message));
+            msgDiv.appendChild(contentDiv);
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                appendMessage(message, true);
+                chatInput.value = '';
+            }
+        }
+
+        sendButton.onclick = sendMessage;
+        chatInput.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        };
+
+        // Xử lý gửi ảnh
+        chatImage.onchange = function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    appendMessage('Ảnh đã gửi:', true, evt.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        const viewProductsBtn = document.getElementById('view-products');
+        const linkPotBtn = document.getElementById('link-pot');
+        const productsSection = document.getElementById('products-section');
+        const potSection = document.getElementById('pot-section');
+        const potSubmit = document.getElementById('pot-submit');
+        const potData = document.getElementById('pot-data');
+
+        viewProductsBtn.onclick = function () {
+            window.location.href = '/products';
+        };
+
+        linkPotBtn.onclick = function () {
+            productsSection.style.display = 'none';
+            potSection.style.display = 'block';
+            potData.innerHTML = '';
+        };
+
+        potSubmit.onclick = function () {
+            const code = document.getElementById('pot-code').value.trim();
+            if (!code) {
+                potData.innerHTML = '<span style="color:red">Vui lòng nhập mã số chậu!</span>';
+                return;
+            }
+            fetch(`/pot-data?code=${encodeURIComponent(code)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        let html = '<table class="popup-table"><tr>';
+                        Object.keys(data[0]).forEach(col => html += `<th>${col}</th>`);
+                        html += '</tr>';
+                        data.forEach(row => {
+                            html += '<tr>';
+                            Object.values(row).forEach(val => html += `<td>${val}</td>`);
+                            html += '</tr>';
+                        });
+                        html += '</table>';
+                        potData.innerHTML = html;
+                    } else {
+                        potData.innerHTML = '<span style="color:red">Không tìm thấy dữ liệu cho mã số này.</span>';
+                    }
+                });
+        };
     </script>
 </body>
 

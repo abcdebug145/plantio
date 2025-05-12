@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách sản phẩm - Plantio</title>
+    <link rel="stylesheet" href="../assets/styles/main.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" style="text-decoration: none;">
+            <div class="navbar-left">
+                <img src="../assets/images/Leaf_icon_03.svg.png" alt="Logo" class="navbar-logo">
+                <span style="font-size: 1.5rem; color: #388e3c; font-weight: bold;">Plantio</span>
+            </div>
+        </a>
+        <div class="navbar-center">
+            <input type="text" class="search-box" id="search-box" placeholder="Tìm kiếm cây trồng, bài viết...">
+        </div>
+        <div class="navbar-right" id="navbar-right">
+            <a href="#" class="navbar-link" id="login-link">Đăng nhập</a>
+            <a href="#" class="navbar-link" id="register-link">Đăng ký</a>
+        </div>
+    </nav>
+    <div class="products-container">
+        <div class="product-card">
+            <img src="../assets/images/pot1.webp" alt="Smart Pot" class="product-img">
+            <div class="product-name">Smart Pot Mini</div>
+            <div class="product-price">$19.99</div>
+        </div>
+        <div class="product-card">
+            <img src="../assets/images/cpot1.webp" alt="My Pot" class="product-img">
+            <div class="product-name">My Pot Classic</div>
+            <div class="product-price">$24.99</div>
+        </div>
+        <div class="product-card">
+            <img src="../assets/images/pot2.webp" alt="Cactus Pot" class="product-img">
+            <div class="product-name">Cactus Pot</div>
+            <div class="product-price">$14.99</div>
+        </div>
+        <div class="product-card">
+            <img src="../assets/images/cpot2.webp" alt="Plantio Premium" class="product-img">
+            <div class="product-name">Plantio Premium</div>
+            <div class="product-price">$39.99</div>
+        </div>
+        <div class="product-card">
+            <img src="../assets/images/pot3.webp" alt="Cactus Pot" class="product-img">
+            <div class="product-name">Cactus Pot</div>
+            <div class="product-price">$14.99</div>
+        </div>
+        <div class="product-card">
+            <img src="../assets/images/cpot3.webp" alt="Cactus Pot" class="product-img">
+            <div class="product-name">Cactus Pot</div>
+            <div class="product-price">$14.99</div>
+        </div>
+        <div class="product-card">
+            <img src="../assets/images/pot4.webp" alt="Cactus Pot" class="product-img">
+            <div class="product-name">Cactus Pot</div>
+            <div class="product-price">$14.99</div>
+        </div>
+        <div class="product-card">
+            <img src="../assets/images/cpot4.webp" alt="Cactus Pot" class="product-img">
+            <div class="product-name">Cactus Pot</div>
+            <div class="product-price">$14.99</div>
+        </div>
+
+    </div>
+    <!-- Button chat -->
+    <button class="chat-button" id="chat-button">
+        <img src="../assets/images/chat.svg" alt="Chat" style="width: 100%; height: 100%;">
+    </button>
+    <!-- Khung chat -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-main">
+            <div class="chat-header">&nbsp;&nbsp;Plantio's Assistant
+                <button class="chat-hide-btn" id="chat-hide-btn" title="Ẩn khung chat">&minus;</button>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input">
+                <label for="chat-image">
+                    <img src="../assets/images/attach.svg" alt="Chat" style="width: 20px; height: 20px;">
+                </label>
+                <input type="file" id="chat-image" accept="image/*">
+                <input type="text" id="chat-input" placeholder="Nhập tin nhắn...">
+                <button id="send-button">
+                    <img src="../assets/images/send.svg" alt="Chat" style="width: 20px; height: 20px;">
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Giả lập trạng thái đăng nhập
+        const isLoggedIn = true;
+        const userName = "Nam";
+        const navbarRight = document.getElementById('navbar-right');
+        if (isLoggedIn) {
+            navbarRight.innerHTML = `<span style=\"color:#388e3c;font-weight:bold; margin-right: 70px;\">Hello, ${userName}</span>`;
+        }
+
+        // Xử lý chat
+        const chatButton = document.getElementById('chat-button');
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatImage = document.getElementById('chat-image');
+        const chatHideBtn = document.getElementById('chat-hide-btn');
+
+        chatButton.onclick = function () {
+            if (chatContainer.style.display === 'none' || !chatContainer.style.display) {
+                chatContainer.style.display = 'flex';
+            } else {
+                chatContainer.style.display = 'none';
+            }
+        };
+
+        chatHideBtn.onclick = function () {
+            chatContainer.style.display = 'none';
+        };
+
+        function appendMessage(message, isUser, imageUrl) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message' + (isUser ? ' user' : '');
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'chat-message-content';
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.style.maxWidth = '120px';
+                img.style.maxHeight = '120px';
+                img.style.display = 'block';
+                img.style.marginBottom = '6px';
+                contentDiv.appendChild(img);
+            }
+            contentDiv.appendChild(document.createTextNode(message));
+            msgDiv.appendChild(contentDiv);
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                appendMessage(message, true);
+                chatInput.value = '';
+            }
+        }
+
+        sendButton.onclick = sendMessage;
+        chatInput.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        };
+
+        // Xử lý gửi ảnh
+        chatImage.onchange = function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    appendMessage('Ảnh đã gửi:', true, evt.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+    </script>
+</body>
+
+</html>

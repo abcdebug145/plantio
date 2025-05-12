@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chậu cây của tôi - Plantio</title>
+    <link rel="stylesheet" href="../assets/styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" style="text-decoration: none;">
+            <div class="navbar-left">
+                <img src="../assets/images/Leaf_icon_03.svg.png" alt="Logo" class="navbar-logo">
+                <span style="font-size: 1.5rem; color: #388e3c; font-weight: bold;">Plantio</span>
+            </div>
+        </a>
+        <div class="navbar-center">
+            <input type="text" class="search-box" id="search-box" placeholder="Tìm kiếm cây trồng, bài viết...">
+        </div>
+        <div class="navbar-right" id="navbar-right">
+            <a href="#" class="navbar-link" id="login-link">Đăng nhập</a>
+            <a href="#" class="navbar-link" id="register-link">Đăng ký</a>
+        </div>
+    </nav>
+    <div class="main-container">
+        <div class="main-content">
+            <h1>Chậu cây của tôi</h1>
+            <div style="max-width:400px;margin:24px auto 32px auto;">
+                <input type="text" id="pot-code" placeholder="Nhập mã số chậu..."
+                    style="padding:10px; border-radius:6px; border:1px solid #b2df28; width:65%;">
+                <button id="link-pot-btn" class="main-btn" style="padding:10px 20px; margin-top:15px;">Liên kết chậu
+                    cây</button>
+                <div id="link-pot-msg" style="margin-top:10px;"></div>
+            </div>
+            <h2 style="margin-bottom:18px;">Danh sách chậu cây đã liên kết</h2>
+            <div class="main-card-container" id="mypot-list">
+                <!-- Card chậu cây sẽ được render ở đây -->
+            </div>
+            <div id="mypot-detail" style="display:none; margin-top:40px;">
+                <div
+                    style="background:rgba(255,255,255,0.7);border-radius:18px;padding:32px 32px 24px 32px;max-width:700px;margin:0 auto;">
+                    <h2>Chi tiết chậu cây</h2>
+                    <div id="mypot-info"></div>
+                    <div id="mypot-data" style="margin-top:18px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Button chat -->
+    <button class="chat-button" id="chat-button">
+        <img src="../assets/images/chat.svg" alt="Chat" style="width: 100%; height: 100%;">
+    </button>
+    <!-- Khung chat -->
+    <div class="chat-container" id="chat-container">
+        <div class="chat-main">
+            <div class="chat-header">&nbsp;&nbsp;Plantio's Assistant
+                <button class="chat-hide-btn" id="chat-hide-btn" title="Ẩn khung chat">&minus;</button>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-input">
+                <label for="chat-image">
+                    <img src="../assets/images/attach.svg" alt="Chat" style="width: 20px; height: 20px;">
+                </label>
+                <input type="file" id="chat-image" accept="image/*">
+                <input type="text" id="chat-input" placeholder="Nhập tin nhắn...">
+                <button id="send-button">
+                    <img src="../assets/images/send.svg" alt="Chat" style="width: 20px; height: 20px;">
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Giả lập trạng thái đăng nhập
+        const isLoggedIn = true;
+        const userName = "Nam";
+        const navbarRight = document.getElementById('navbar-right');
+        if (isLoggedIn) {
+            navbarRight.innerHTML = `<span style=\"color:#388e3c;font-weight:bold; margin-right: 70px;\">Hello, ${userName}</span>`;
+        }
+
+        // Dữ liệu mẫu các chậu cây đã liên kết
+        let mypots = [
+            {
+                id: 'POT123',
+                name: 'Chậu xương rồng',
+                image: '../assets/images/pot1.webp',
+                status: 'Online',
+                type: 'Xương rồng',
+                date: '2024-05-01',
+                data: [
+                    { time: '2024-06-01 08:00', moisture: 45, temp: 28, light: 300 },
+                    { time: '2024-06-01 12:00', moisture: 40, temp: 30, light: 500 },
+                    { time: '2024-06-01 16:00', moisture: 38, temp: 32, light: 600 }
+                ]
+            },
+            {
+                id: 'POT456',
+                name: 'Chậu sen đá',
+                image: '../assets/images/pot2.webp',
+                status: 'Offline',
+                type: 'Sen đá',
+                date: '2024-04-15',
+                data: [
+                    { time: '2024-06-01 08:00', moisture: 55, temp: 27, light: 200 },
+                    { time: '2024-06-01 12:00', moisture: 50, temp: 29, light: 400 },
+                    { time: '2024-06-01 16:00', moisture: 48, temp: 31, light: 450 }
+                ]
+            }
+        ];
+
+        // Render danh sách chậu cây
+        function renderMyPots() {
+            const list = document.getElementById('mypot-list');
+            list.innerHTML = '';
+            mypots.forEach((pot, idx) => {
+                const card = document.createElement('div');
+                card.className = 'main-card';
+                card.style.width = '260px';
+                card.style.height = '370px';
+                card.style.cursor = 'pointer';
+                card.innerHTML = `
+                    <img src="${pot.image}" alt="${pot.name}" style="width:100%;height:200px;object-fit:cover;">
+                    <div class="main-card-content">
+                        <div class="main-card-title">${pot.name}</div>
+                        <div class="main-card-desc">Mã số: <b>${pot.id}</b></div>
+                        <div class="main-card-desc">Trạng thái: <span style="color:${pot.status === 'Online' ? '#388e3c' : '#888'}">${pot.status}</span></div>
+                        <button class="main-card-btn" onclick="showPotDetail(${idx})">Xem chi tiết</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // Hiển thị chi tiết chậu cây
+        window.showPotDetail = function (idx) {
+            const pot = mypots[idx];
+            document.getElementById('mypot-detail').style.display = 'block';
+            document.getElementById('mypot-info').innerHTML = `
+                <div style="display:flex;align-items:center;gap:24px;">
+                    <img src="${pot.image}" alt="${pot.name}" style="width:120px;height:120px;object-fit:cover;border-radius:12px;">
+                    <div style="text-align:left;">
+                        <div><b>Tên chậu:</b> ${pot.name}</div>
+                        <div><b>Mã số:</b> ${pot.id}</div>
+                        <div><b>Loại cây:</b> ${pot.type}</div>
+                        <div><b>Ngày liên kết:</b> ${pot.date}</div>
+                        <div><b>Trạng thái:</b> <span style="color:${pot.status === 'Online' ? '#388e3c' : '#888'}">${pot.status}</span></div>
+                    </div>
+                </div>
+            `;
+            // Render biểu đồ dữ liệu cảm biến
+            let chartHtml = '<h3 style="margin-top:24px;">Biểu đồ cảm biến</h3>';
+            chartHtml += '<canvas id="sensorChart" height="220"></canvas>';
+            document.getElementById('mypot-data').innerHTML = chartHtml;
+            // Vẽ chart
+            const ctx = document.getElementById('sensorChart').getContext('2d');
+            const labels = pot.data.map(row => row.time);
+            const moisture = pot.data.map(row => row.moisture);
+            const temp = pot.data.map(row => row.temp);
+            const light = pot.data.map(row => row.light);
+            if (window.sensorChart && typeof window.sensorChart.destroy === 'function') {
+                window.sensorChart.destroy();
+            }
+            window.sensorChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Độ ẩm đất (%)',
+                            data: moisture,
+                            borderColor: '#388e3c',
+                            backgroundColor: 'rgba(56,142,60,0.08)',
+                            yAxisID: 'y',
+                            tension: 0.3,
+                        },
+                        {
+                            label: 'Nhiệt độ (°C)',
+                            data: temp,
+                            borderColor: '#fbc02d',
+                            backgroundColor: 'rgba(251,192,45,0.08)',
+                            yAxisID: 'y1',
+                            tension: 0.3,
+                        },
+                        {
+                            label: 'Ánh sáng (lux)',
+                            data: light,
+                            borderColor: '#0288d1',
+                            backgroundColor: 'rgba(2,136,209,0.08)',
+                            yAxisID: 'y2',
+                            tension: 0.3,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    interaction: { mode: 'index', intersect: false },
+                    stacked: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Độ ẩm đất (%)' },
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'Nhiệt độ (°C)' },
+                        },
+                        y2: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            title: { display: true, text: 'Ánh sáng (lux)' },
+                            offset: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Xử lý liên kết chậu cây
+        document.getElementById('link-pot-btn').onclick = function () {
+            const code = document.getElementById('pot-code').value.trim();
+            const msg = document.getElementById('link-pot-msg');
+            if (!code) {
+                msg.innerHTML = '<span style="color:red">Vui lòng nhập mã số chậu!</span>';
+                return;
+            }
+            // Kiểm tra trùng mã
+            if (mypots.some(p => p.id === code)) {
+                msg.innerHTML = '<span style="color:red">Chậu này đã được liên kết!</span>';
+                return;
+            }
+            // Thêm chậu mới (demo, thực tế sẽ gọi API)
+            mypots.push({
+                id: code,
+                name: 'Chậu mới',
+                image: '../assets/images/pot1.webp',
+                status: 'Online',
+                type: 'Chưa xác định',
+                date: new Date().toISOString().slice(0, 10),
+                data: []
+            });
+            msg.innerHTML = '<span style="color:green">Liên kết thành công!</span>';
+            renderMyPots();
+        };
+
+        renderMyPots();
+
+        // Xử lý chat (giống các trang khác)
+        const chatButton = document.getElementById('chat-button');
+        const chatContainer = document.getElementById('chat-container');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatImage = document.getElementById('chat-image');
+        const chatHideBtn = document.getElementById('chat-hide-btn');
+
+        chatButton.onclick = function () {
+            if (chatContainer.style.display === 'none' || !chatContainer.style.display) {
+                chatContainer.style.display = 'flex';
+            } else {
+                chatContainer.style.display = 'none';
+            }
+        };
+
+        chatHideBtn.onclick = function () {
+            chatContainer.style.display = 'none';
+        };
+
+        function appendMessage(message, isUser, imageUrl) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'chat-message' + (isUser ? ' user' : '');
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'chat-message-content';
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.style.maxWidth = '120px';
+                img.style.maxHeight = '120px';
+                img.style.display = 'block';
+                img.style.marginBottom = '6px';
+                contentDiv.appendChild(img);
+            }
+            contentDiv.appendChild(document.createTextNode(message));
+            msgDiv.appendChild(contentDiv);
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                appendMessage(message, true);
+                chatInput.value = '';
+            }
+        }
+
+        sendButton.onclick = sendMessage;
+        chatInput.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        };
+
+        // Xử lý gửi ảnh
+        chatImage.onchange = function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    appendMessage('Ảnh đã gửi:', true, evt.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+    </script>
+</body>
+
+</html>

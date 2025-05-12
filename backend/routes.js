@@ -7,6 +7,14 @@ module.exports = function (app) {
         res.sendFile(path.join(__dirname, '../pages/index.html'));
     });
 
+    app.get('/products', (req, res) => {
+        res.sendFile(path.join(__dirname, '../pages/products.html'));
+    });
+
+    app.get('/mypot', (req, res) => {
+        res.sendFile(path.join(__dirname, '../pages/mypot.html'));
+    });
+
     // Cấu hình phục vụ file tĩnh
     app.use('/assets', express.static(path.join(__dirname, '../assets')));
     app.use('/pages', express.static(path.join(__dirname, '../pages')));
