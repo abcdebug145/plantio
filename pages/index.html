@@ -10,16 +10,17 @@
 
 <body>
     <nav class="navbar">
-        <div class="navbar-left">
-            <img src="../assets/images/Leaf_icon_03.svg.png" alt="Logo" class="navbar-logo">
-            <span style="font-size: 1.5rem; color: #388e3c; font-weight: bold;">Plantio</span>
-        </div>
+        <a href="/" style="text-decoration: none;">
+            <div class="navbar-left">
+                <img src="../assets/images/Leaf_icon_03.svg.png" alt="Logo" class="navbar-logo">
+                <span style="font-size: 1.5rem; color: #388e3c; font-weight: bold;">Plantio</span>
+            </div>
+        </a>
         <div class="navbar-center">
             <input type="text" class="search-box" id="search-box" placeholder="Tìm kiếm cây trồng, bài viết...">
         </div>
         <div class="navbar-right" id="navbar-right">
-            <a href="#" class="navbar-link" id="login-link">Đăng nhập</a>
-            <a href="#" class="navbar-link" id="register-link">Đăng ký</a>
+            <!-- js here -->
         </div>
     </nav>
     <div class="main-container">
@@ -32,7 +33,6 @@
                         <div class="main-card-content">
                             <div class="main-card-title">Xem các sản phẩm</div>
                             <div class="main-card-desc">Khám phá các sản phẩm, chậu cây và phụ kiện của Plantio.</div>
-                            <!-- <button class="main-card-btn" id="view-products">Xem ngay</button> -->
                         </div>
                     </div>
                 </a>
@@ -85,186 +85,9 @@
             </div>
         </div>
     </div>
-    <script>
-        // Giả lập trạng thái đăng nhập
-        // Đổi biến này thành true để kiểm tra giao diện đã đăng nhập
-        const isLoggedIn = true;
-        const userName = "Nam";
-        const navbarRight = document.getElementById('navbar-right');
-        if (isLoggedIn) {
-            navbarRight.innerHTML = `<span style=\"color:#388e3c;font-weight:bold; margin-right: 70px;\">Hello, ${userName}</span>`;
-        }
-
-        // Xử lý tìm kiếm
-        const searchBox = document.getElementById('search-box');
-        const popupOverlay = document.getElementById('popup-overlay');
-        const popupContent = document.getElementById('popup-content');
-        const popupClose = document.getElementById('popup-close');
-
-        function showPopup(html) {
-            popupContent.innerHTML = html;
-            popupOverlay.style.display = 'flex';
-        }
-        function hidePopup() {
-            popupOverlay.style.display = 'none';
-        }
-        popupClose.onclick = hidePopup;
-        popupOverlay.onclick = function (e) {
-            if (e.target === popupOverlay) hidePopup();
-        };
-
-        searchBox.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                const key = searchBox.value.trim();
-                if (key) {
-                    fetch(`/data?key=${encodeURIComponent(key)}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            console.log(data)
-                            // Hiển thị kết quả dạng bảng
-                            let html = '';
-                            if (data && Array.isArray(data) && data.length > 0) {
-                                html += '<table class="popup-table">';
-                                html += '<tr>';
-                                // Header
-                                html += '<th>Device ID</th>';
-                                html += '<th>Moisure Percent</th>';
-                                html += '<th></th>';
-                                html += '</tr>';
-                                // Rows
-                                data.forEach(row => {
-                                    html += '<tr>';
-                                    Object.values(row).forEach(val => {
-                                        html += `<td>${val}</td>`;
-                                    });
-                                    html += '</tr>';
-                                });
-                                html += '</table>';
-                            } else if (data) {
-                                html = `<div>${data}</div>`;
-                            } else {
-                                html = '<div>Không tìm thấy kết quả phù hợp.</div>';
-                            }
-                            showPopup(html);
-                        })
-                        .catch(err => {
-                            showPopup('<div style="color:red">Lỗi khi tìm kiếm!</div>');
-                        });
-                }
-            }
-        });
-
-        // Xử lý chat
-        const chatButton = document.getElementById('chat-button');
-        const chatContainer = document.getElementById('chat-container');
-        const chatInput = document.getElementById('chat-input');
-        const sendButton = document.getElementById('send-button');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatImage = document.getElementById('chat-image');
-        const chatHideBtn = document.getElementById('chat-hide-btn');
-
-        chatButton.onclick = function () {
-            if (chatContainer.style.display === 'none' || !chatContainer.style.display) {
-                chatContainer.style.display = 'flex';
-            } else {
-                chatContainer.style.display = 'none';
-            }
-        };
-
-        chatHideBtn.onclick = function () {
-            chatContainer.style.display = 'none';
-        };
-
-        function appendMessage(message, isUser, imageUrl) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'chat-message' + (isUser ? ' user' : '');
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'chat-message-content';
-            if (imageUrl) {
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.style.maxWidth = '120px';
-                img.style.maxHeight = '120px';
-                img.style.display = 'block';
-                img.style.marginBottom = '6px';
-                contentDiv.appendChild(img);
-            }
-            contentDiv.appendChild(document.createTextNode(message));
-            msgDiv.appendChild(contentDiv);
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function sendMessage() {
-            const message = chatInput.value.trim();
-            if (message) {
-                appendMessage(message, true);
-                chatInput.value = '';
-            }
-        }
-
-        sendButton.onclick = sendMessage;
-        chatInput.onkeydown = function (event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        };
-
-        // Xử lý gửi ảnh
-        chatImage.onchange = function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (evt) {
-                    appendMessage('Ảnh đã gửi:', true, evt.target.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        const viewProductsBtn = document.getElementById('view-products');
-        const linkPotBtn = document.getElementById('link-pot');
-        const productsSection = document.getElementById('products-section');
-        const potSection = document.getElementById('pot-section');
-        const potSubmit = document.getElementById('pot-submit');
-        const potData = document.getElementById('pot-data');
-
-        viewProductsBtn.onclick = function () {
-            window.location.href = '/products';
-        };
-
-        linkPotBtn.onclick = function () {
-            productsSection.style.display = 'none';
-            potSection.style.display = 'block';
-            potData.innerHTML = '';
-        };
-
-        potSubmit.onclick = function () {
-            const code = document.getElementById('pot-code').value.trim();
-            if (!code) {
-                potData.innerHTML = '<span style="color:red">Vui lòng nhập mã số chậu!</span>';
-                return;
-            }
-            fetch(`/pot-data?code=${encodeURIComponent(code)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        let html = '<table class="popup-table"><tr>';
-                        Object.keys(data[0]).forEach(col => html += `<th>${col}</th>`);
-                        html += '</tr>';
-                        data.forEach(row => {
-                            html += '<tr>';
-                            Object.values(row).forEach(val => html += `<td>${val}</td>`);
-                            html += '</tr>';
-                        });
-                        html += '</table>';
-                        potData.innerHTML = html;
-                    } else {
-                        potData.innerHTML = '<span style="color:red">Không tìm thấy dữ liệu cho mã số này.</span>';
-                    }
-                });
-        };
-    </script>
+    <!-- ajax here -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../assets/js/main.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - Plantio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: url('../assets/images/web_bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.8rem;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .btn-register {
+            background-color: #28a745;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .btn-register:hover {
+            background-color: #218838;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="register-container">
+        <h2 class="text-center mb-4">Đăng ký tài khoản</h2>
+        <form id="registerForm">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" required>
+                <div class="error-message" id="emailError"></div>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Họ và tên</label>
+                <input type="text" class="form-control" id="username" required>
+                <div class="error-message" id="usernameError"></div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu</label>
+                <div class="password-container">
+                    <input type="password" class="form-control" id="password" required>
+                    <i class="toggle-password fas fa-eye" onclick="togglePassword('password')"></i>
+                </div>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                <div class="password-container">
+                    <input type="password" class="form-control" id="confirmPassword" required>
+                    <i class="toggle-password fas fa-eye" onclick="togglePassword('confirmPassword')"></i>
+                </div>
+                <div class="error-message" id="confirmPasswordError"></div>
+            </div>
+            <button type="submit" class="btn btn-register btn-success">Đăng ký</button>
+        </form>
+        <div class="login-link">
+            Đã có tài khoản? <a href="/login">Đăng nhập</a>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validate password match
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'Mật khẩu không khớp';
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        username,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // window.location.href = '/login';
+                    console.log(data);
+                } else {
+                    // Handle specific error messages
+                    if (data.message.includes('email')) {
+                        document.getElementById('emailError').textContent = data.message;
+                        document.getElementById('emailError').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+
+</html>

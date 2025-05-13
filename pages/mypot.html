@@ -21,8 +21,7 @@
             <input type="text" class="search-box" id="search-box" placeholder="Tìm kiếm cây trồng, bài viết...">
         </div>
         <div class="navbar-right" id="navbar-right">
-            <a href="#" class="navbar-link" id="login-link">Đăng nhập</a>
-            <a href="#" class="navbar-link" id="register-link">Đăng ký</a>
+            <!-- js here -->
         </div>
     </nav>
     <div class="main-container">
@@ -72,21 +71,15 @@
             </div>
         </div>
     </div>
+    <!-- ajax here -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../assets/js/main.js"></script>
     <script>
-        // Giả lập trạng thái đăng nhập
-        const isLoggedIn = true;
-        const userName = "Nam";
-        const navbarRight = document.getElementById('navbar-right');
-        if (isLoggedIn) {
-            navbarRight.innerHTML = `<span style=\"color:#388e3c;font-weight:bold; margin-right: 70px;\">Hello, ${userName}</span>`;
-        }
-
-        // Dữ liệu mẫu các chậu cây đã liên kết
         let mypots = [
             {
                 id: 'POT123',
                 name: 'Chậu xương rồng',
-                image: '../assets/images/pot1.webp',
+                image: '../backend/uploads/pot1.webp',
                 status: 'Online',
                 type: 'Xương rồng',
                 date: '2024-05-01',
@@ -99,7 +92,7 @@
             {
                 id: 'POT456',
                 name: 'Chậu sen đá',
-                image: '../assets/images/pot2.webp',
+                image: '../backend/uploads/pot2.webp',
                 status: 'Offline',
                 type: 'Sen đá',
                 date: '2024-04-15',
@@ -119,10 +112,10 @@
                 const card = document.createElement('div');
                 card.className = 'main-card';
                 card.style.width = '260px';
-                card.style.height = '370px';
+                card.style.height = '400px';
                 card.style.cursor = 'pointer';
                 card.innerHTML = `
-                    <img src="${pot.image}" alt="${pot.name}" style="width:100%;height:200px;object-fit:cover;">
+                    <img src="${pot.image}" alt="${pot.name}" style="width:100%;height:250px;object-fit:cover;">
                     <div class="main-card-content">
                         <div class="main-card-title">${pot.name}</div>
                         <div class="main-card-desc">Mã số: <b>${pot.id}</b></div>
@@ -257,74 +250,6 @@
         };
 
         renderMyPots();
-
-        // Xử lý chat (giống các trang khác)
-        const chatButton = document.getElementById('chat-button');
-        const chatContainer = document.getElementById('chat-container');
-        const chatInput = document.getElementById('chat-input');
-        const sendButton = document.getElementById('send-button');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatImage = document.getElementById('chat-image');
-        const chatHideBtn = document.getElementById('chat-hide-btn');
-
-        chatButton.onclick = function () {
-            if (chatContainer.style.display === 'none' || !chatContainer.style.display) {
-                chatContainer.style.display = 'flex';
-            } else {
-                chatContainer.style.display = 'none';
-            }
-        };
-
-        chatHideBtn.onclick = function () {
-            chatContainer.style.display = 'none';
-        };
-
-        function appendMessage(message, isUser, imageUrl) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'chat-message' + (isUser ? ' user' : '');
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'chat-message-content';
-            if (imageUrl) {
-                const img = document.createElement('img');
-                img.src = imageUrl;
-                img.style.maxWidth = '120px';
-                img.style.maxHeight = '120px';
-                img.style.display = 'block';
-                img.style.marginBottom = '6px';
-                contentDiv.appendChild(img);
-            }
-            contentDiv.appendChild(document.createTextNode(message));
-            msgDiv.appendChild(contentDiv);
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function sendMessage() {
-            const message = chatInput.value.trim();
-            if (message) {
-                appendMessage(message, true);
-                chatInput.value = '';
-            }
-        }
-
-        sendButton.onclick = sendMessage;
-        chatInput.onkeydown = function (event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        };
-
-        // Xử lý gửi ảnh
-        chatImage.onchange = function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (evt) {
-                    appendMessage('Ảnh đã gửi:', true, evt.target.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        };
     </script>
 </body>
 
